@@ -1,0 +1,6 @@
+module Pods_RandoStore {
+  umbrella header "Pods-RandoStore-umbrella.h"
+
+  export *
+  module * { export * }
+}
