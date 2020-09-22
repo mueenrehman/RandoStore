@@ -39,6 +39,7 @@ export let addItems = async (name, price, imgUrl) => {
 //Delete service
 export let deleteItems = async (id) => {
     try {
+        console.log(id)
         let response = await fetch("http://localhost:3000/items/" + id, {
             method: 'DELETE',
         })

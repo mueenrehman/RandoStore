@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Text, TouchableOpacity, View, Image, ScrollView, FlatList } from "react-native";
 import * as ItemService from '../services/Item'
+import Ionicons from "react-native-vector-icons/Ionicons"
 import Storage from '../helper/Storage'
 import { TextInput } from "react-native-gesture-handler";
 import TopBar from '../components/TopBar'
@@ -29,6 +30,20 @@ export default class CheckOut extends Component {
         })
     }
 
+    removeItemFromCheckoutList = async (item, index) => {
+        this.state.itemsList = 0
+        if (item.id == Storage.addedItems[index].id) {
+            Storage.addedItems.splice(index, 1)
+            Storage.itemCount = Storage.itemCount - 1
+        }
+        this.setState({
+            itemsList: Storage.addedItems
+        }, () => {
+            this.getTotalPrice()
+        })
+
+    }
+
     render() {
         if (this.state.itemsList.length != 0) {
             return (
@@ -40,14 +55,14 @@ export default class CheckOut extends Component {
                             showsVerticalScrollIndicator={false}
                             data={this.state.itemsList}
                             renderItem={({ item, index }) =>
-                                <TouchableOpacity style={{ height: 140, width: '100%', marginTop: 10 }} activeOpacity={0.7}  >
+                                <View style={{ height: 140, width: '100%', marginTop: 10 }} activeOpacity={0.7}  >
                                     <View style={{ flexDirection: 'row', justifyContent: 'center', backgroundColor: 'white' }}>
-                                        <View style={{ marginLeft: '5%', justifyContent: 'center', width: '40%', }}>
+                                        <View style={{ justifyContent: 'center', width: '40%', }}>
                                             <Image
                                                 style={{ height: '90%', width: '90%', resizeMode: 'stretch' }}
                                                 source={{ uri: "http://localhost:3000/" + item.img }} />
                                         </View>
-                                        <View style={{ width: '54%', marginLeft: '4%' }}>
+                                        <View style={{ width: '46%', marginLeft: '0%', backgroundColor: 'white' }}>
                                             <View style={{ justifyContent: 'center', backgroundColor: 'white', marginRight: '5%', marginTop: '2%' }}>
                                                 <Text numberOfLines={3} style={{ color: 'black', fontSize: 21, fontWeight: 'bold', marginRight: '2%' }}>{item.name}</Text>
                                             </View>
@@ -55,12 +70,20 @@ export default class CheckOut extends Component {
                                                 <Text numberOfLines={2} style={{ color: 'grey', fontSize: 16, }}>Rs: {item.price}</Text>
                                             </View>
                                         </View>
+                                        <View style={{ width: '10%', backgroundColor: "white" }}>
+                                            <TouchableOpacity style={{ width: '70%', backgroundColor: 'white', alignItems: 'center', top: 0 }}
+                                                onPress={() => {
+                                                    this.removeItemFromCheckoutList(item, index)
+                                                }}>
+                                                <Ionicons name="close-circle-outline" size={30} ></Ionicons>
+                                            </TouchableOpacity>
+                                        </View>
                                     </View>
-                                </TouchableOpacity>
+                                </View>
                             }
                             keyExtractor={item => item.title} />
                     </View>
-                    <View style={{ height: '30%', width: '100%', borderRadius: 20, backgroundColor: 'lightgrey', }}>
+                    <View style={{ height: '30%', width: '100%', borderRadius: 20, backgroundColor: '#F6F6F6', }}>
                         <Text style={{ fontSize: 25, fontWeight: '700', textAlign: 'center', marginTop: '5%' }}>
                             Order Details
                     </Text>
@@ -82,10 +105,14 @@ export default class CheckOut extends Component {
         }
         else {
             return (
-                <View style={{ height: "100%", width: '100%', justifyContent: 'center', alignItems: 'center', backgroundColor: 'white' }}>
-                    <Text style={{ fontSize: 20, }}>
-                        No items added
+
+                <View style={{ height: "100%", width: '100%', backgroundColor: 'white' }}>
+                    <TopBar props={this.props} pageName={this.props.navigation.state.routeName} />
+                    <View style={{ height: "80%", width: '100%', justifyContent: 'center', alignItems: 'center', backgroundColor: 'white' }}>
+                        <Text style={{ fontSize: 20, }}>
+                            No items added
                     </Text>
+                    </View>
                 </View>
             )
 

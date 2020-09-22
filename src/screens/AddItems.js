@@ -37,14 +37,16 @@ export default class AddItems extends Component {
         if (response != undefined && response != null) { //response of service
             console.log("response =>", response)
             alert("item added successfully")
+            this.refreshItemList()
         }
     }
 
-    deleteItemsFromServer = async (item) => { //delete service
-        let response = await ItemService.addItems(item.id)
+    refreshItemList = async () =>{
+        let response = await ItemService.getItems()
         if (response != undefined && response != null) {
             console.log("response =>", response)
-            alert("Item deleted successfully")
+            Storage.items = response //items are assigned to global variable
+            
         }
     }
 
@@ -58,6 +60,7 @@ export default class AddItems extends Component {
                         style={{ top: '7%', margin: '3%', height: '10%', }}
                         mode="outlined"
                         label="Name"
+                        theme={{ colors: { primary:"#2196F3" } }}
                         value={this.state.name}
                         onChangeText={(text) => this.setState({ name: text })}
                     />
@@ -65,6 +68,7 @@ export default class AddItems extends Component {
                         style={{ top: '7%', height: '10%', margin: '3%' }}
                         mode="outlined"
                         label="Price"
+                        theme={{ colors: { primary:"#2196F3" } }}
                         value={this.state.price}
                         onChangeText={(text) => this.setState({ price: text })}
                     />
@@ -72,13 +76,13 @@ export default class AddItems extends Component {
                         style={{ top: '7%', height: '10%', margin: '3%' }}
                         mode="outlined"
                         label="Image Url"
+                        theme={{ colors: { primary:"#2196F3" } }}
                         value={this.state.photoUrl}
                         onChangeText={(text) => this.setState({ photoUrl: text })}
                     />
                     <View style={{ height: '20%', marginTop: '5%' }}>
                         <TouchableOpacity style={{ backgroundColor: "#2196F3", width: '70%', height: '50%', marginLeft: '15%', marginRight: '15%', marginTop: '10%', borderRadius: 40, justifyContent: 'center', }}
                             onPress={() => { this.addItemToServer() }} >
-
                             <Text style={{ color: "white", fontWeight: "bold", textAlign: "center", fontSize: 25 }}>Submit</Text>
                         </TouchableOpacity>
 

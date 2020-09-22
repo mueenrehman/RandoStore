@@ -3,6 +3,7 @@ import { Text, TouchableOpacity, View, Image, ScrollView, FlatList } from "react
 import Ionicons from "react-native-vector-icons/Ionicons"
 import TopBar from '../components/TopBar'
 import Storage from '../helper/Storage'
+import * as ItemService from '../services/Item'
 
 export default class Items extends Component {
     static navigationOptions = {
@@ -14,6 +15,15 @@ export default class Items extends Component {
             items: Storage.items,
             count: Storage.itemCount
         }
+        this._didAppear = this.props.navigation.addListener('didFocus', payback => {
+            this.basketCount() //to get the basket count after coming back to homepage from items page
+        })
+    }
+
+    basketCount = () => {
+        this.setState({
+            count: Storage.itemCount 
+        })
     }
 
     addItemsToCart = (item) => { //adding items to basket
@@ -23,6 +33,25 @@ export default class Items extends Component {
             count: Storage.itemCount
         })
     }
+    deleteItemsFromServer = async (item) => { //delete service
+        let response = await ItemService.deleteItems(item.id)
+            console.log("response =>", response)
+            alert("Item deleted successfully")
+            this.refreshItemList()
+        
+    }
+
+    refreshItemList = async () =>{
+        let response = await ItemService.getItems()
+        if (response != undefined && response != null) {
+            console.log("response =>", response)
+            Storage.items = response //items are assigned to global variable
+            this.setState({
+                items: response
+            })
+        }
+    }
+
     render() {
         return (
             <View style={{ height: '100%', width: '100%', backgroundColor: 'white' }}>
@@ -46,12 +75,23 @@ export default class Items extends Component {
                                         <Text numberOfLines={2} style={{ color: 'grey', fontSize: 16, }}>Rs {item.price}</Text>
                                     </View>
                                 </View>
-                                <TouchableOpacity style={{ width: '20%', backgroundColor: 'white', alignItems: 'center' }}
+                                <View style={{width:'20%', flexDirection:'row',}}>
+                                   
+                                <TouchableOpacity style={{ width: '50%', backgroundColor: 'white', alignItems: 'center' }}
                                     onPress={() => {
                                         this.addItemsToCart(item)
                                     }}>
                                     <Ionicons name="add-circle-outline" size={35} ></Ionicons>
                                 </TouchableOpacity>
+
+                                <TouchableOpacity style={{ width: '50%', backgroundColor: 'white', alignItems: 'center', top: 0 }}
+                                    onPress={() => {
+                                        console.log('id', item.id)
+                                        this.deleteItemsFromServer(item)
+                                    }}>
+                                    <Ionicons name="trash-outline" size={35} color={'#ed0000'} ></Ionicons>
+                                </TouchableOpacity>
+                                </View>
                             </View>
                         </View>
                     }

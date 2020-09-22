@@ -61,7 +61,7 @@ export default class TopBar extends Component {
                     {
                         this.state.name != "CheckOut" &&
                         <View style={{ backgroundColor: 'red', height: 30, width: 30, borderRadius: 100, position: 'absolute', top: 5, right: 5, justifyContent: 'center' }}>
-                            <Text style={{ color: 'black', textAlign: 'center' }}>
+                            <Text style={{ color: 'white', fontWeight:'bold', textAlign: 'center' }}>
                                 {this.state.count}
                             </Text>
                         </View>
