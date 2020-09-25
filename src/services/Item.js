@@ -15,13 +15,13 @@ export let getItems = async () => {
 //Add service
 export let addItems = async (name, price, imgUrl) => {
     try {
-        console.log("itemData", JSON.stringify({
-            name: name,
-            price: price,
-            img: imgUrl
-           }),)
+        console.log("name", name)
         let response = await fetch("http://localhost:3000/items", {
             method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
             body: JSON.stringify({
                name: name,
                price: price,
@@ -39,7 +39,6 @@ export let addItems = async (name, price, imgUrl) => {
 //Delete service
 export let deleteItems = async (id) => {
     try {
-        console.log(id)
         let response = await fetch("http://localhost:3000/items/" + id, {
             method: 'DELETE',
         })
