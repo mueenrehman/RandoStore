@@ -1,51 +1,51 @@
 import React, { Component } from "react";
-import { Text, TouchableOpacity, View, Image, ScrollView, FlatList } from "react-native";
+import { Text, TouchableOpacity, View, Image, FlatList, StatusBar } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons"
 import TopBar from '../components/TopBar'
-import Storage from '../helper/Storage'
+import Storage from '../helper/GlobalVariables'
 import * as ItemService from '../services/Item'
 
 export default class Items extends Component {
     static navigationOptions = {
         headerShown: false
     };
+
     constructor(props) {
-        super(props);
+        super(props)
         this.state = {
             items: Storage.items,
             count: Storage.itemCount
         }
-        this._didAppear = this.props.navigation.addListener('didFocus', payback => {
-            this.basketCount() //to get the basket count after coming back to homepage from items page
+        this._didAppear = this.props.navigation.addListener("didFocus", payback => {
+            this.bucketCount()
         })
     }
 
-    basketCount = () => {
+    bucketCount = () => {
         this.setState({
-            count: Storage.itemCount 
+            count: Storage.itemCount
         })
     }
 
-    addItemsToCart = (item) => { //adding items to basket
+    addItemsToCart = async (item) => {
         Storage.addedItems.push(item)
         Storage.itemCount = Storage.itemCount + 1
         this.setState({
             count: Storage.itemCount
         })
     }
-    deleteItemsFromServer = async (item) => { //delete service
-        let response = await ItemService.deleteItems(item.id)
-            console.log("response =>", response)
-            alert("Item deleted successfully")
-            this.refreshItemList()
-        
-    }
 
-    refreshItemList = async () =>{
+    deleteItemsFromServer = async (item) => {
+        let response = await ItemService.deleteItems(item.id)
+        alert('item deleted successfully')
+        this.refreshItemList()
+    }
+    
+    refreshItemList = async () => {
         let response = await ItemService.getItems()
         if (response != undefined && response != null) {
-            console.log("response =>", response)
-            Storage.items = response //items are assigned to global variable
+            console.log('response =>', response)
+            Storage.items = response
             this.setState({
                 items: response
             })
@@ -55,6 +55,7 @@ export default class Items extends Component {
     render() {
         return (
             <View style={{ height: '100%', width: '100%', backgroundColor: 'white' }}>
+                <StatusBar backgroundColor="grey" barStyle='dark-content' />
                 <TopBar props={this.props} pageName={this.props.navigation.state.routeName} />
                 <FlatList
                     showsVerticalScrollIndicator={false}
@@ -75,22 +76,21 @@ export default class Items extends Component {
                                         <Text numberOfLines={2} style={{ color: 'grey', fontSize: 16, }}>Rs {item.price}</Text>
                                     </View>
                                 </View>
-                                <View style={{width:'20%', flexDirection:'row',}}>
-                                   
-                                <TouchableOpacity style={{ width: '50%', backgroundColor: 'white', alignItems: 'center' }}
-                                    onPress={() => {
-                                        this.addItemsToCart(item)
-                                    }}>
-                                    <Ionicons name="add-circle-outline" size={35} ></Ionicons>
-                                </TouchableOpacity>
+                                <View style={{ width: '20%', flexDirection: 'row', }}>
 
-                                <TouchableOpacity style={{ width: '50%', backgroundColor: 'white', alignItems: 'center', top: 0 }}
-                                    onPress={() => {
-                                        console.log('id', item.id)
-                                        this.deleteItemsFromServer(item)
-                                    }}>
-                                    <Ionicons name="trash-outline" size={35} color={'#ed0000'} ></Ionicons>
-                                </TouchableOpacity>
+                                    <TouchableOpacity style={{ width: '50%', backgroundColor: 'white', alignItems: 'center' }}
+                                        onPress={() => {
+                                            this.addItemsToCart(item)
+                                        }}>
+                                        <Ionicons name="add-circle-outline" size={35} ></Ionicons>
+                                    </TouchableOpacity>
+
+                                    <TouchableOpacity style={{ width: '50%', backgroundColor: 'white', alignItems: 'center', top: 0 }}
+                                        onPress={() => {
+                                            this.deleteItemsFromServer(item)
+                                        }}>
+                                        <Ionicons name="trash-outline" size={35} color={'#ed0000'} ></Ionicons>
+                                    </TouchableOpacity>
                                 </View>
                             </View>
                         </View>
